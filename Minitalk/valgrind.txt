@@ -1,0 +1,7 @@
+{
+    ___libc_sigaction_
+        Memcheck:Leak
+        match-leak-kinds: all
+        ...
+        fun:__libc_sigaction
+}  
