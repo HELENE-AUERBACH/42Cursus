@@ -6,7 +6,7 @@
 /*   By: hauerbac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:47:41 by hauerbac          #+#    #+#             */
-/*   Updated: 2024/03/22 18:05:47 by hauerbac         ###   ########.fr       */
+/*   Updated: 2024/03/25 14:26:01 by hauerbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,14 @@ static void	binary_digits_to_ascci_char(int sig, siginfo_t *info,
 	static char	converted_char = 0;
 
 	(void) context;
-	if (sig == SIGUSR2)
+	if (sig == SIGUSR2 && bit < 8)
 		converted_char |= (1 << bit);
-	kill(info->si_pid, SIGUSR2);
 	bit++;
 	if (bit == 8)
 	{
 		if (converted_char != '\0')
 			append_char_to_str(converted_char);
-		if (converted_char == '\0')
+		else
 		{
 			ft_putendl_fd(g_message, 1);
 			free_g_message();
@@ -93,7 +92,11 @@ static void	binary_digits_to_ascci_char(int sig, siginfo_t *info,
 		}
 		bit = 0;
 		converted_char = 0;
+		if (g_message)
+			kill(info->si_pid, SIGUSR2);
 	}
+	if (bit != 0)
+		kill(info->si_pid, SIGUSR2);
 }
 
 int	main(void)
