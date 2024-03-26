@@ -6,7 +6,7 @@
 /*   By: hauerbac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 18:54:44 by hauerbac          #+#    #+#             */
-/*   Updated: 2024/03/21 18:55:19 by hauerbac         ###   ########.fr       */
+/*   Updated: 2024/03/25 15:02:03 by hauerbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	check_args_are_valid(size_t args[5], int argc, char **argv)
 			|| (i < 5 && argv[i][0] == '0' && argv[i][1] == '\0')
 			|| ft_atoi(argv[i]) < 0)
 		{
-			digit_to_char = (i + 1) + '0';
+			digit_to_char = i + '0';
 			write(2, "Wrong ", 6);
 			write(2, &digit_to_char, 1);
 			write(2, "th argument value\n", 18);

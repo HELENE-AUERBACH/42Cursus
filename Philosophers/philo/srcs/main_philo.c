@@ -6,7 +6,7 @@
 /*   By: hauerbac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 17:39:53 by hauerbac          #+#    #+#             */
-/*   Updated: 2024/03/24 20:23:37 by hauerbac         ###   ########.fr       */
+/*   Updated: 2024/03/25 13:32:31 by hauerbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,7 @@ static void	*philo_routine(void *philo_ptr)
 	philosopher = (t_philosopher *) philo_ptr;
 	if (philosopher->nb_of_philosophers == 1)
 	{
-		pthread_mutex_lock(philosopher->left_fork_mutex);
 		print_message("has taken a fork", philosopher);
-		ft_usleep(philosopher->time_to_die, philosopher);
-		pthread_mutex_unlock(philosopher->left_fork_mutex);
-		philosopher->is_dead = 1;
-		print_message("died", philosopher);
 		return (philo_ptr);
 	}
 	else if (philosopher->id % 2 == 0)
@@ -59,8 +54,10 @@ static void	*philo_routine(void *philo_ptr)
 			even_eats(philosopher);
 		else
 			odd_eats(philosopher);
-		sleeps(philosopher);
-		thinks(philosopher);
+		if (!is_dead(philosopher))
+			sleeps(philosopher);
+		if (!is_dead(philosopher))
+			thinks(philosopher);
 	}
 	return (philo_ptr);
 }
@@ -84,7 +81,7 @@ static int	create_threads(t_simulation *sim, size_t args[5],
 			return (write(2, "P. thread creation error\n", 25), -2);
 		i++;
 	}
-	if (pthread_create(&observer, NULL, &observer_routine, &sim) != 0)
+	if (pthread_create(&observer, NULL, &observer_routine, sim) != 0)
 		return (write(2, "Observer thread creation error\n", 31), -1);
 	if (pthread_join(observer, NULL) != 0)
 		return (write(2, "Join observer thread error\n", 27), -4);

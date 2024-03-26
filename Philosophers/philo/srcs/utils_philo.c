@@ -6,7 +6,7 @@
 /*   By: hauerbac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 18:03:44 by hauerbac          #+#    #+#             */
-/*   Updated: 2024/03/24 20:01:31 by hauerbac         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:23:01 by hauerbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	print_message(char *str, t_philosopher *philosopher)
 {
 	size_t	time;
 
+	if (is_dead(philosopher))
+		return ;
 	time = get_current_time_in_ms() - philosopher->start_time;
 	if (pthread_mutex_lock(philosopher->write_mutex) == 0)
 	{
@@ -64,8 +66,6 @@ int	ft_usleep(size_t milliseconds, t_philosopher *philosopher)
 		if (pthread_mutex_lock(philosopher->dead_mutex) != 0)
 			return (write(2, "dead_mutex lock error\n", 22), -1);
 	}
-	if (philosopher->is_dead == 1)
-		printf("died");
 	if (pthread_mutex_unlock(philosopher->dead_mutex) != 0)
 		return (write(2, "dead_mutex unlock error\n", 24), -1);
 	return (0);
