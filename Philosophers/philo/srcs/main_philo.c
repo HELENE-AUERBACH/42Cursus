@@ -6,7 +6,7 @@
 /*   By: hauerbac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 17:39:53 by hauerbac          #+#    #+#             */
-/*   Updated: 2024/03/25 13:32:31 by hauerbac         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:19:54 by hauerbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,20 +75,20 @@ static int	create_threads(t_simulation *sim, size_t args[5],
 	{
 		init_philosopher(sim, i, args, forks);
 		sim->philosophers[i].start_time = time_in_ms;
-		sim->philosophers[i].last_meal_time = time_in_ms;
+		sim->philosophers[i++].last_meal_time = time_in_ms;
+	}
+	if (pthread_create(&observer, NULL, &observer_routine, sim) != 0)
+		return (write(2, "Observer thread creation error\n", 31), -1);
+	i = 0;
+	while (i < args[NUMBER_OF_PHILOSOPHERS])
+	{
 		if (pthread_create(&sim->philosophers[i].thread, NULL,
 				&philo_routine, &sim->philosophers[i]) != 0)
 			return (write(2, "P. thread creation error\n", 25), -2);
 		i++;
 	}
-	if (pthread_create(&observer, NULL, &observer_routine, sim) != 0)
-		return (write(2, "Observer thread creation error\n", 31), -1);
 	if (pthread_join(observer, NULL) != 0)
-		return (write(2, "Join observer thread error\n", 27), -4);
-	i = 0;
-	while (i < args[NUMBER_OF_PHILOSOPHERS])
-		if (pthread_join(sim->philosophers[i++].thread, NULL) != 0)
-			return (write(2, "Join phi. thread error\n", 23), -3);
+		return (write(2, "Join observer thread error\n", 27), -3);
 	return (0);
 }
 
@@ -97,6 +97,10 @@ static void	destroy_simulation(t_simulation *sim, size_t args[5],
 {
 	size_t	i;
 
+	i = 0;
+	while (i < args[NUMBER_OF_PHILOSOPHERS])
+		if (pthread_join(sim->philosophers[i++].thread, NULL) != 0)
+			write(2, "Join phi. thread error\n", 23);
 	pthread_mutex_destroy(&sim->write_mutex);
 	pthread_mutex_destroy(&sim->meal_mutex);
 	pthread_mutex_destroy(&sim->dead_mutex);
