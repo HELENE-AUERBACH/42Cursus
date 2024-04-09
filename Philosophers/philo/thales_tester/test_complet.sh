@@ -66,6 +66,8 @@ test_philosopher_death () {
 	check_death_occurred  "$test_number" "$log_file"
 	check_simulation_ends "$test_number" "$log_file"
 	death_timing "$log_file" "${params[1]}" "$test_number"
+	test_valgrind $1 $2 $3 $4 $5 $6 $7 $test_number
+	test_helgrind $1 $2 $3 $4 $5 $6 $7 $test_number
 
   rm -rf "$log_file"
 }
@@ -110,6 +112,8 @@ test_philosopher_meals () {
 	done
 	check_philosophers_eat "$log_file" "$3" "$7" "$test_number" "${program_params[@]}"
 	rm -rf "$log_file"
+	test_valgrind_meals $1 $2 $3 $4 $5 $6 $7 $8 $test_number
+	test_helgrind_meals $1 $2 $3 $4 $5 $6 $7 $8 $test_number
 }
 
 
@@ -384,6 +388,12 @@ if [ "$2" -eq 1 -o "$2" -eq 0 ];then
 	test_philosopher_meals "$target" "$1" "199" "610" "200" "200" "10" "15"
 	test_philosopher_meals "$target" "$1" "199" "610" "200" "80" "10" "16"
 	test_philosopher_meals "$target" "$1" "200" "410" "200" "80" "10" "17"
+
+	echo -e "\n\t\t${green}[============[ CPU Checks ]==============]${reset}\n"
+
+	check_cpu_usage "$target" "$1" "2" "800" "200" "200" "70" "18"
+	check_cpu_usage "$target" "$1" "10" "800" "200" "200" "70" "19"
+	check_cpu_usage "$target" "$1" "50" "800" "200" "200" "70" "20"
 
 	echo -e "\n\t\t${green}[============[ Running Philo for 40 Seconds ]==============]${reset}\n"
 

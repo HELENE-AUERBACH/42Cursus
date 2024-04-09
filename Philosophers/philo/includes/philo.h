@@ -6,7 +6,7 @@
 /*   By: hauerbac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/21 17:18:36 by hauerbac          #+#    #+#             */
-/*   Updated: 2024/03/24 18:20:38 by hauerbac         ###   ########.fr       */
+/*   Updated: 2024/04/08 10:51:50 by hauerbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,12 @@ typedef struct s_philosopher
 {
 	unsigned int	id;
 	unsigned int	eaten_meals;
-	unsigned int	is_eating;
-	unsigned int	is_dead;
+	unsigned int	*is_dead;
 	size_t			nb_of_philosophers;
 	size_t			time_to_die;
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
-	size_t			nb_times_must_eat;
+	size_t			nb_min_meals;
 	size_t			start_time;
 	size_t			last_meal_time;
 	pthread_t		thread;
@@ -51,7 +50,6 @@ typedef struct s_philosopher
 typedef struct s_simulation
 {
 	unsigned int	is_a_dead_philo;
-	unsigned int	did_all_philos_eat;
 	pthread_mutex_t	write_mutex;
 	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	dead_mutex;
@@ -68,11 +66,12 @@ enum e_args
 };
 
 int				check_args_are_valid(size_t args[5], int argc, char **argv);
-size_t			get_current_time_in_ms(void);
-int				ft_usleep(size_t milliseconds, t_philosopher *philosopher);
+size_t			get_time_in_ms(void);
+int				let_sleep_in_ms(size_t milliseconds,
+					t_philosopher *philosopher);
 unsigned int	is_dead(t_philosopher *philosopher);
 void			print_message(char *str, t_philosopher *philosopher);
-void			*observer_routine(void *simulation_ptr);
+void			observer_routine(t_simulation *sim);
 void			thinks(t_philosopher *philosopher);
 void			even_eats(t_philosopher *philosopher);
 void			odd_eats(t_philosopher *philosopher);
